@@ -35,6 +35,14 @@ public:
         return Do(req);
     }
 
+    http::response<http::string_body> Post(const char *path,const nlohmann::json& body) {
+        http::request<http::string_body> req{http::verb::post, path, 11};
+        req.set(http::field::content_type, "application/json");
+        req.body() = body.dump();
+        req.prepare_payload();
+        return Do(req);
+    }
+
     net::io_context ioc;
     tcp::resolver resolver{ioc};
     beast::tcp_stream stream{ioc};

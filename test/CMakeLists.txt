@@ -1,5 +1,5 @@
 add_executable(endpoint_test)
-target_sources(endpoint_test PRIVATE readings.cpp)
+target_sources(endpoint_test PRIVATE ReadingTest.cpp)
 find_package(GTest REQUIRED)
 find_package(nlohmann_json REQUIRED)
 target_link_libraries(endpoint_test PRIVATE GTest::gmock_main nlohmann_json::nlohmann_json rest)

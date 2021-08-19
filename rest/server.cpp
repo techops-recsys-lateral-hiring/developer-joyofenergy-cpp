@@ -1,6 +1,7 @@
 #include "server.h"
 
 #include <controller/MeterReadingController.h>
+#include <controller/PricePlanComparatorController.h>
 
 #include "configuration.h"
 #include "listener.h"
@@ -11,7 +12,8 @@ namespace server_detail {
     public:
         explicit impl(int concurrency) : ioc(concurrency) {
             using reading = MeterReadingController;
-            router.to<reading, &reading::Read>(R"(/readings/read/([a-zA-Z0-9_-]+))", readingService);
+            router.to<reading, &reading::Read>(R"(/readings/read/([a-zA-Z0-9_-]+))", electricityReadingService, meterReadingService);
+            router.to<reading, &reading::Store>(R"(/readings/store)", electricityReadingService, meterReadingService);
         }
 
         void launch(const char *address, unsigned short port) {
@@ -27,7 +29,8 @@ namespace server_detail {
     private:
         boost::asio::io_context ioc;
         std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings{readings()};
-        ElectricityReadingService readingService{meterAssociatedReadings};
+        ElectricityReadingService electricityReadingService{meterAssociatedReadings};
+        MeterReadingService meterReadingService{meterAssociatedReadings};
         router router;
         std::function<http::response<http::string_body>(
                 const http::request<http::string_body> &)> handler = router.handler();

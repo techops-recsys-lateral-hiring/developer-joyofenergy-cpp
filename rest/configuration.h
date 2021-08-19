@@ -21,11 +21,11 @@ constexpr auto ANDREAS_SMART_METER_ID = "smart-meter-3";
 constexpr auto ALEXS_SMART_METER_ID = "smart-meter-4";
 
 std::vector<PricePlan> price_plans() {
-    // todo
-    //    pricePlans.add(new PricePlan(MOST_EVIL_PRICE_PLAN_ID, "Dr Evil's Dark Energy", BigDecimal.TEN, emptyList()));
-    //    pricePlans.add(new PricePlan(RENEWABLES_PRICE_PLAN_ID, "The Green Eco", BigDecimal.valueOf(2), emptyList()));
-    //    pricePlans.add(new PricePlan(STANDARD_PRICE_PLAN_ID, "Power for Everyone", BigDecimal.ONE, emptyList()));
-    return {};
+    std::vector<PricePlan> pricePlans;
+        pricePlans.push_back(PricePlan(MOST_EVIL_PRICE_PLAN_ID, DR_EVILS_DARK_ENERGY_ENERGY_SUPPLIER, 10, {}));
+        pricePlans.push_back(PricePlan(RENEWABLES_PRICE_PLAN_ID, THE_GREEN_ECO_ENERGY_SUPPLIER, 2, {}));
+        pricePlans.push_back(PricePlan(STANDARD_PRICE_PLAN_ID, POWER_FOR_EVERYONE_ENERGY_SUPPLIER, 1, {}));
+    return pricePlans;
 }
 
 std::unordered_map<std::string, std::string> smart_meter_to_price_plan_accounts() {
