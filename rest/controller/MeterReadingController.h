@@ -33,7 +33,7 @@ namespace detail {
 
     auto renderReadingAsJson(const ElectricityReading &r) {
         return nlohmann::json{{"time",    toRfc3339(r.getTime())},
-                              {"reading", r.getReading()}};
+                              {"reading", double(r.getReading()) / 10000}};
     }
 }  // namespace detail
 

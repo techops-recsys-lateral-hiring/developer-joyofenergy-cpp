@@ -33,9 +33,9 @@ public:
         res.set(http::field::content_type, "application/json");
         res.keep_alive(req.keep_alive());
         nlohmann::json j;
-        j["pricePlanComparisons"] = {{"price-plan-0", double(costs.value()["price-plan-0"])/10000},
-                                     {"price-plan-1", double(costs.value()["price-plan-1"])/10000},
-                                     {"price-plan-2", double(costs.value()["price-plan-2"])/10000}};
+        j["pricePlanComparisons"] = {{"price-plan-0", double(costs.value()["price-plan-0"]) / 10000},
+                                     {"price-plan-1", double(costs.value()["price-plan-1"]) / 10000},
+                                     {"price-plan-2", double(costs.value()["price-plan-2"]) / 10000}};
         j["pricePlanId"] = current_price_plans[meterId];
         res.body() = j.dump();
         res.prepare_payload();
@@ -63,7 +63,7 @@ public:
         res.keep_alive(req.keep_alive());
         auto results = nlohmann::json::array();
         std::transform(ordered_costs.begin(), ordered_costs.end(), std::back_inserter(results),
-                       [](auto &cost) { return nlohmann::json{{cost.first, cost.second}}; });
+                       [](auto &cost) { return nlohmann::json{{cost.first, double(cost.second) / 10000}}; });
         nlohmann::json j;
         j["recommend"] = results;
         res.body() = j.dump();
