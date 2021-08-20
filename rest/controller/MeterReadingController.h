@@ -23,6 +23,14 @@ namespace detail {
         return ss.str();
     }
 
+    auto fromRfc3339(const std::string &time) {
+        std::tm tm = {};
+        std::stringstream ss(time);
+        ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
+        auto tp = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+        return tp;
+    }
+
     auto renderReadingAsJson(const ElectricityReading &r) {
         return nlohmann::json{{"time",    toRfc3339(r.getTime())},
                               {"reading", r.getReading()}};
@@ -60,18 +68,11 @@ public:
         auto body = nlohmann::json::parse(req.body());
         auto smartMeterId = body["smartMeterId"];
         std::vector<ElectricityReading> electricityReadings;
-
         for (auto &electricityReading : body["electricityReadings"]) {
-            std::string tmp = electricityReading["time"];
-            std::tm tm = {};
-            std::stringstream ss(tmp);
-            ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
-            auto tp = std::chrono::system_clock::from_time_t(std::mktime(&tm));
-            electricityReadings.emplace_back(tp, electricityReading["reading"]);
+            electricityReadings.emplace_back(detail::fromRfc3339(electricityReading["time"]),
+                                             electricityReading["reading"]);
         }
         meterReadingService.storeReadings(smartMeterId, electricityReadings);
-
-        std::cout << electricityReadings.size() << std::endl;
         return {};
     }
 

@@ -20,12 +20,12 @@ constexpr auto CHARLIES_SMART_METER_ID = "smart-meter-2";
 constexpr auto ANDREAS_SMART_METER_ID = "smart-meter-3";
 constexpr auto ALEXS_SMART_METER_ID = "smart-meter-4";
 
-std::vector<PricePlan> price_plans() {
-    std::vector<PricePlan> pricePlans;
-        pricePlans.push_back(PricePlan(MOST_EVIL_PRICE_PLAN_ID, DR_EVILS_DARK_ENERGY_ENERGY_SUPPLIER, 10, {}));
-        pricePlans.push_back(PricePlan(RENEWABLES_PRICE_PLAN_ID, THE_GREEN_ECO_ENERGY_SUPPLIER, 2, {}));
-        pricePlans.push_back(PricePlan(STANDARD_PRICE_PLAN_ID, POWER_FOR_EVERYONE_ENERGY_SUPPLIER, 1, {}));
-    return pricePlans;
+std::vector<PricePlan> pricePlans() {
+    std::vector<PricePlan> price_plans;
+    price_plans.push_back(PricePlan(MOST_EVIL_PRICE_PLAN_ID, DR_EVILS_DARK_ENERGY_ENERGY_SUPPLIER, 10, {}));
+    price_plans.push_back(PricePlan(RENEWABLES_PRICE_PLAN_ID, THE_GREEN_ECO_ENERGY_SUPPLIER, 2, {}));
+    price_plans.push_back(PricePlan(STANDARD_PRICE_PLAN_ID, POWER_FOR_EVERYONE_ENERGY_SUPPLIER, 1, {}));
+    return price_plans;
 }
 
 std::unordered_map<std::string, std::string> smart_meter_to_price_plan_accounts() {
@@ -39,7 +39,7 @@ std::unordered_map<std::string, std::string> smart_meter_to_price_plan_accounts(
 auto readings() {
     std::unordered_map<std::string, std::vector<ElectricityReading>> result;
     for (auto &[meter, plan] : smart_meter_to_price_plan_accounts()) {
-        result[meter] = generator{}.generate(20);
+        result[meter] = generator{}.generate(21);
     }
     return result;
 }

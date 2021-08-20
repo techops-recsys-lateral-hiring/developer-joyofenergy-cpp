@@ -12,8 +12,11 @@ namespace server_detail {
     public:
         explicit impl(int concurrency) : ioc(concurrency) {
             using reading = MeterReadingController;
+            using price_plan = PricePlanComparatorController;
             router.to<reading, &reading::Read>(R"(/readings/read/([a-zA-Z0-9_-]+))", electricityReadingService, meterReadingService);
             router.to<reading, &reading::Store>(R"(/readings/store)", electricityReadingService, meterReadingService);
+            router.to<price_plan, &price_plan::Compare>(R"(/price-plans/compare-all/([a-zA-Z0-9_-]+))", pricePlanService);
+            router.to<price_plan, &price_plan::Recommend>(R"(/price-plans/recommend/([a-zA-Z0-9_-]+)\?(limit)=([0-9]+))", pricePlanService);
         }
 
         void launch(const char *address, unsigned short port) {
@@ -31,6 +34,8 @@ namespace server_detail {
         std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings{readings()};
         ElectricityReadingService electricityReadingService{meterAssociatedReadings};
         MeterReadingService meterReadingService{meterAssociatedReadings};
+        std::vector<PricePlan> price_plans{pricePlans()};
+        PricePlanService pricePlanService{price_plans, meterReadingService};
         router router;
         std::function<http::response<http::string_body>(
                 const http::request<http::string_body> &)> handler = router.handler();

@@ -18,7 +18,7 @@ TEST_F(ReadingsTest, ReadReadingShouldRespondWithAllReadingsGivenValidMeter) {
     ASSERT_THAT(res.result(), Eq(http::status::ok));
     auto body = json::parse(res.body());
     auto readings = body["readings"];
-    EXPECT_THAT(readings, SizeIs(20));
+    EXPECT_THAT(readings, SizeIs(21));
 }
 
 TEST_F(ReadingsTest, ReadReadingShouldRespondNotFoundGivenInvalidMeter) {
@@ -28,7 +28,6 @@ TEST_F(ReadingsTest, ReadReadingShouldRespondNotFoundGivenInvalidMeter) {
 }
 
 TEST_F(ReadingsTest, StoreShouldRespondWithMultipelValidBatchesOfMeter) {
-    static int READING_SIZE = 3;
     json request_body = R"({
             "smartMeterId": "smart-meter-0",
             "electricityReadings": [
@@ -45,4 +44,22 @@ TEST_F(ReadingsTest, StoreShouldRespondWithMultipelValidBatchesOfMeter) {
     auto res = client.Post("/readings/store", request_body);
 
     ASSERT_THAT(res.result(), Eq(http::status::ok));
+}
+
+TEST_F(ReadingsTest, PricePlanShouldRespondWithValidMeter) {
+    auto res = client.Get("/price-plans/compare-all/smart-meter-0");
+
+    ASSERT_THAT(res.result(), Eq(http::status::ok));
+    auto body = json::parse(res.body());
+    auto price_plans = body["pricePlanComparisons"];
+    EXPECT_THAT(price_plans, SizeIs(3));
+}
+
+TEST_F(ReadingsTest, PricePlanRecommendShouldRespondWithValidMeterAndLimit) {
+    auto res = client.Get("/price-plans/recommend/smart-meter-0?limit=2");
+
+    ASSERT_THAT(res.result(), Eq(http::status::ok));
+    auto body = json::parse(res.body());
+    auto price_plans = body["recommend"];
+    EXPECT_THAT(price_plans, SizeIs(2));
 }

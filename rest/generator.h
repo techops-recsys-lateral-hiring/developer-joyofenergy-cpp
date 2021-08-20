@@ -12,8 +12,8 @@ public:
         readings.reserve(number);
         auto now = std::chrono::system_clock::now();
         for (int i = number; i > 0; i--) {
-            auto r = std::abs(std::rand()) % 4;
-            readings.emplace_back(now - std::chrono::seconds(i * 10), r);
+            auto r = std::abs(std::rand()) % 4000;
+            readings.emplace_back(now - std::chrono::minutes(i * 3), 4000);
         }
         return readings;
     }

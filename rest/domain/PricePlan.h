@@ -24,11 +24,11 @@ public:
             : planName(planName), energySupplier(energySupplier), unitRate(unitRate),
               peakTimeMultipliers(peakTimeMultipliers) {}
 
-    const std::string &getEnergySupplier() const { return energySupplier; }
+    std::string getEnergySupplier() const { return energySupplier; }
 
-    const std::string &getPlanName() const { return planName; }
+    std::string getPlanName() const { return planName; }
 
-    const int getUnitRate() const { return unitRate; }
+    int getUnitRate() const { return unitRate; }
 
 private:
     const std::string energySupplier;

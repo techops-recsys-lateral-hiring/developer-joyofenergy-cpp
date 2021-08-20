@@ -15,28 +15,27 @@
 
 class MeterReadingService {
 public:
-    std::optional<std::vector<ElectricityReading>> getReadings(std::string smartMeterId) {
+    std::optional<std::vector<ElectricityReading>> getReadings(const std::string &smartMeterId) {
         if (meterAssociatedReadings.find(smartMeterId) == meterAssociatedReadings.end()) {
             return {};
         }
         return meterAssociatedReadings[smartMeterId];
     }
 
-    void storeReadings(std::string smartMeterId, std::vector<ElectricityReading> electricityReadings) {
+    void storeReadings(const std::string &smartMeterId, std::vector<ElectricityReading> &electricityReadings) {
         if (meterAssociatedReadings.find(smartMeterId) == meterAssociatedReadings.end()) {
             meterAssociatedReadings[smartMeterId] = {};
         }
         meterAssociatedReadings[smartMeterId].insert(meterAssociatedReadings[smartMeterId].end(),
                                                      electricityReadings.begin(), electricityReadings.end());
-
-        std::cout<<meterAssociatedReadings.size()<<std::endl;
     }
 
-    MeterReadingService(std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings) :
+    explicit MeterReadingService(
+            std::unordered_map<std::string, std::vector<ElectricityReading>> &meterAssociatedReadings) :
             meterAssociatedReadings(meterAssociatedReadings) {}
 
 private:
-    std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings;
+    std::unordered_map<std::string, std::vector<ElectricityReading>> &meterAssociatedReadings;
 };
 
 #endif //DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGSERVICE_H
