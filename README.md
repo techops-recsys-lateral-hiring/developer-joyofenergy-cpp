@@ -57,65 +57,48 @@ These values are used in the code and in the following examples too.
 
 ## Requirements
 
-The project requires [Java 1.8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or
+The project requires Cmake 3.21 or
 higher.
 
-The project makes use of Gradle and uses
-the [Gradle wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html), which means you don't need Gradle
-installed.
+The project makes use of Conan.
 
-## Useful Gradle commands
+## Useful Conan commands
 
-The project makes use of Gradle and uses the Gradle wrapper to help you out carrying some common tasks such as building
+The project makes use of Conan to help you out carrying some common tasks such as building
 the project or running it.
 
 ### Build the project
 
-Compiles the project, runs the test and then creates an executable JAR file
+Compiles the project, runs the test and then creates an executable file.
 
 ```console
-$ ./conan install
+$ mkdir build && cd build
+$ conan install .. --build missing
+$ cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake
+$ cmake --build . -j
 ```
 
-Run the application using Java and the executable JAR file produced by the Gradle `build` task. The application will be
-listening to port `8080`.
+Run the application.
 
 ```console
-$ java -jar build/libs/joi-energy.jar
+$ ./app <address> <kPort> <concurrency>
 ```
 
 ### Run the tests
 
 There are two types of tests, the unit tests and the functional tests. These can be executed as follows.
 
-- Run unit tests only
-
-  ```console
-  $ ./gradlew test
-  ```
-
 - Run functional tests only
 
   ```console
-  $ ./gradlew functionalTest
+  $ ctest .
   ```
 
-- Run both unit and functional tests
-
-  ```console
-  $ ./gradlew check
-  ```
 
 ### Run the application
   ```console
-  $ ....
-  ```              
-
-Run the application which will be listening on port `8080`.
-
-```console
-$ ./gradlew bootRun
-```
+  $ ./app <address> <kPort> <concurrency>
+  ```
 
 ## API
 
@@ -299,3 +282,4 @@ Example output
     ]
 }
 ```
+
