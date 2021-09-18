@@ -1,29 +1,25 @@
 #ifndef DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGS_H
 #define DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGS_H
 
-#include <string>
-#include <list>
-
 #include <domain/ElectricityReading.h>
 
+#include <list>
+#include <string>
+
 class MeterReadings {
-public:
-    MeterReadings() {}
+ public:
+  MeterReadings() {}
 
-    MeterReadings(std::string smartMeterId, std::list<ElectricityReading> electricityReadings) :
-            smartMeterId(smartMeterId), electricityReadings(electricityReadings) {};
+  MeterReadings(std::string smartMeterId, std::list<ElectricityReading> electricityReadings)
+      : smartMeterId(smartMeterId), electricityReadings(electricityReadings){};
 
-    std::list<ElectricityReading> getElectricityReadings() {
-        return electricityReadings;
-    }
+  std::list<ElectricityReading> getElectricityReadings() { return electricityReadings; }
 
-    std::string getSmartMeterId() {
-        return smartMeterId;
-    }
+  std::string getSmartMeterId() { return smartMeterId; }
 
-private:
-    std::list<ElectricityReading> electricityReadings;
-    std::string smartMeterId;
+ private:
+  std::list<ElectricityReading> electricityReadings;
+  std::string smartMeterId;
 };
 
-#endif //DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGS_H
+#endif  // DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGS_H

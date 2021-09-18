@@ -1,40 +1,38 @@
 #ifndef DEVELOPER_JOYOFENERGY_CPP_BEAST_PRICEPLAN_H
 #define DEVELOPER_JOYOFENERGY_CPP_BEAST_PRICEPLAN_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 class PricePlan {
-    // todo:
-public:
-    class PeakTimeMultiplier {
-        enum DayOfWeek {
-            MONDAY,
-            TUESDAY,
-        };
-
-        DayOfWeek dayOfWeek;
-        int multiplier;
-
-        PeakTimeMultiplier(DayOfWeek dayOfWeek, int multiplier) : dayOfWeek(dayOfWeek), multiplier(multiplier) {}
+  // todo:
+ public:
+  class PeakTimeMultiplier {
+    enum DayOfWeek {
+      MONDAY,
+      TUESDAY,
     };
 
-    PricePlan(std::string planName, std::string energySupplier, int unitRate,
-              std::vector<PeakTimeMultiplier> peakTimeMultipliers)
-            : planName(planName), energySupplier(energySupplier), unitRate(unitRate),
-              peakTimeMultipliers(peakTimeMultipliers) {}
+    DayOfWeek dayOfWeek;
+    int multiplier;
 
-    std::string getEnergySupplier() const { return energySupplier; }
+    PeakTimeMultiplier(DayOfWeek dayOfWeek, int multiplier) : dayOfWeek(dayOfWeek), multiplier(multiplier) {}
+  };
 
-    std::string getPlanName() const { return planName; }
+  PricePlan(std::string planName, std::string energySupplier, int unitRate, std::vector<PeakTimeMultiplier> peakTimeMultipliers)
+      : planName(planName), energySupplier(energySupplier), unitRate(unitRate), peakTimeMultipliers(peakTimeMultipliers) {}
 
-    int getUnitRate() const { return unitRate; }
+  std::string getEnergySupplier() const { return energySupplier; }
 
-private:
-    const std::string energySupplier;
-    const std::string planName;
-    const int unitRate;  // unit price per kWh
-    const std::vector<PeakTimeMultiplier> peakTimeMultipliers;
+  std::string getPlanName() const { return planName; }
+
+  int getUnitRate() const { return unitRate; }
+
+ private:
+  const std::string energySupplier;
+  const std::string planName;
+  const int unitRate;  // unit price per kWh
+  const std::vector<PeakTimeMultiplier> peakTimeMultipliers;
 };
 
 #endif  // DEVELOPER_JOYOFENERGY_CPP_BEAST_PRICEPLAN_H
