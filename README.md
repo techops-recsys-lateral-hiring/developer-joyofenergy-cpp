@@ -78,11 +78,6 @@ $ cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake
 $ cmake --build . -j
 ```
 
-Run the application.
-
-```console
-$ ./app <address> <kPort> <concurrency>
-```
 
 ### Run the tests
 
