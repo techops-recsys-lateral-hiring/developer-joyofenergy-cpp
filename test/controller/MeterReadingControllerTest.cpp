@@ -1,5 +1,4 @@
 #include <gmock/gmock.h>
-#include <rest/configuration.h>
 #include <rest/controller/MeterReadingController.h>
 
 #include <boost/beast/http.hpp>
@@ -18,7 +17,7 @@ class MeterReadingControllerTest : public ::testing::Test {
   MeterReadingController controller{electricityReadingService, meterReadingService};
 
   http::request<http::string_body> BuildRequest(http::verb verb, boost::string_view target, const json &request_body) {
-    http::request<http::string_body> req{http::verb::post, "/readings/store", 11};
+    http::request<http::string_body> req{verb, target, 11};
     req.set(http::field::content_type, "application/json");
     req.body() = request_body.dump();
     req.prepare_payload();
@@ -128,7 +127,7 @@ TEST_F(MeterReadingControllerTest, StoreShouldStoreAssociatedWithUserGivenMeterR
 }
 
 TEST_F(MeterReadingControllerTest, ReadShouldReturnNotFoundGivenMeterIdThatIsNotRecognised) {
-  auto req = BuildRequest(http::verb::post, "/readings/store", R"({})"_json);
+  http::request<http::string_body> req;
   std::vector<std::string> queries = {"smart-meter-0"};
 
   auto response = controller.Read(req, queries);
