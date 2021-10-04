@@ -14,6 +14,9 @@ class ElectricityReading {
 
   size_t getReading() const { return reading; }
 
+  bool operator==(const ElectricityReading& rhs) const { return time == rhs.time && reading == rhs.reading; }
+  bool operator!=(const ElectricityReading& rhs) const { return !(rhs == *this); }
+
  private:
   time_point_type time;
   size_t reading;
