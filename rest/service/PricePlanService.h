@@ -2,7 +2,6 @@
 #define DEVELOPER_JOYOFENERGY_CPP_BEAST_PRICEPLANSERVICE_H
 
 #include <configuration.h>
-#include <controller/MeterReadingController.h>
 #include <domain/ElectricityReading.h>
 #include <domain/PricePlan.h>
 #include <service/MeterReadingService.h>

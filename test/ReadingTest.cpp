@@ -1,6 +1,5 @@
 #include <nlohmann/json.hpp>
 
-#include "domain/ElectricityReading.h"
 #include "generator.h"
 #include "test/EndpointTest.h"
 

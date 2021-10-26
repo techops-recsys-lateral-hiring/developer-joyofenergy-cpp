@@ -6,6 +6,8 @@
 
 #include "generator.h"
 
+#include <unordered_map>
+
 constexpr auto DR_EVILS_DARK_ENERGY_ENERGY_SUPPLIER = "Dr Evil's Dark Energy";
 constexpr auto THE_GREEN_ECO_ENERGY_SUPPLIER = "The Green Eco";
 constexpr auto POWER_FOR_EVERYONE_ENERGY_SUPPLIER = "Power for Everyone";

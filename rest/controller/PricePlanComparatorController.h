@@ -31,9 +31,10 @@ class PricePlanComparatorController {
     res.set(http::field::content_type, "application/json");
     res.keep_alive(req.keep_alive());
     nlohmann::json j;
-    j["pricePlanComparisons"] = {{"price-plan-0", double(costs.value()["price-plan-0"]) / 10000},
-                                 {"price-plan-1", double(costs.value()["price-plan-1"]) / 10000},
-                                 {"price-plan-2", double(costs.value()["price-plan-2"]) / 10000}};
+    for (auto &ele : costs.value()) {
+      ele.second /= 10000;
+    }
+    j["pricePlanComparisons"] = costs.value();
     j["pricePlanId"] = current_price_plans[meterId];
     res.body() = j.dump();
     res.prepare_payload();
@@ -43,17 +44,22 @@ class PricePlanComparatorController {
   http::response<http::string_body> Recommend(const http::request<http::string_body> &req,
                                               const std::vector<std::string> &queries) {
     const auto &meterId = queries[0];
-    int limit = std::stoi(queries[2]);
+    std::optional<int> maybeLimit;
+    if (queries.size() > 2){
+      maybeLimit = std::stoi(queries[2]);
+    }
     auto costs = pricePlanService.getConsumptionCostOfElectricityReadingsForEachPricePlan(meterId);
 
     if (!costs) {
       return {http::status::not_found, req.version()};
     }
 
-    std::vector<std::pair<std::string, float>> ordered_costs{costs->begin(), costs->end()};
+    std::vector<std::pair<std::string, double>> ordered_costs{costs->begin(), costs->end()};
     std::sort(ordered_costs.begin(), ordered_costs.end(),
               [](auto &cost_a, auto &cost_b) { return cost_a.second < cost_b.second; });
-    ordered_costs.resize(std::min(limit, int(ordered_costs.size())));
+    if (maybeLimit.has_value()) {
+      ordered_costs.resize(std::min(maybeLimit.value(), int(ordered_costs.size())));
+    }
 
     http::response<http::string_body> res{http::status::ok, req.version()};
     res.set(http::field::content_type, "application/json");

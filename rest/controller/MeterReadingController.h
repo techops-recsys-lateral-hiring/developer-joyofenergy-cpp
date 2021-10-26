@@ -64,6 +64,9 @@ class MeterReadingController {
     auto body = nlohmann::json::parse(req.body());
     auto smartMeterId = body["smartMeterId"];
     std::vector<ElectricityReading> electricityReadings;
+    if (!IsMeterReadingsValid(smartMeterId, body["electricityReadings"])) {
+      return {http::status::internal_server_error, 11};
+    }
     for (auto &electricityReading : body["electricityReadings"]) {
       electricityReadings.emplace_back(detail::fromRfc3339(electricityReading["time"]), electricityReading["reading"]);
     }
@@ -74,6 +77,13 @@ class MeterReadingController {
  private:
   ElectricityReadingService &electricityReadingService;
   MeterReadingService &meterReadingService;
+  bool IsMeterReadingsValid(const nlohmann::basic_json<> &smartMeterId,
+                            const nlohmann::basic_json<> &electricityReadings) {
+    if (smartMeterId.type() == nlohmann::json::value_t::null || electricityReadings.empty()) {
+      return false;
+    }
+    return true;
+  }
 };
 
 #endif  // DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGCONTROLLER_H
