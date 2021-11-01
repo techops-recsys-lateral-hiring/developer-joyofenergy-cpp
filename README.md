@@ -74,7 +74,7 @@ Compiles the project, runs the test and then creates an executable file.
 ```console
 $ mkdir build && cd build
 $ conan install .. --build missing
-$ cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake
+$ cmake ..
 $ cmake --build . -j
 ```
 
