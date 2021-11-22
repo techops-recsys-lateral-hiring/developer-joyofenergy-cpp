@@ -19,7 +19,7 @@ class ElectricityReading {
 
  private:
   time_point_type time;
-  size_t reading;
+  size_t reading; // scale out in 0.1w for precision
 };
 
 #endif  // DEVELOPER_JOYOFENERGY_CPP_BEAST_ELECTRICITYREADING_H

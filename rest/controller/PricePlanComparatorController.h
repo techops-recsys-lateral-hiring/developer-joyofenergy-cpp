@@ -66,7 +66,7 @@ class PricePlanComparatorController {
     res.keep_alive(req.keep_alive());
     auto results = nlohmann::json::array();
     std::transform(ordered_costs.begin(), ordered_costs.end(), std::back_inserter(results), [](auto &cost) {
-      return nlohmann::json{{cost.first, double(cost.second) / 10000}};
+      return nlohmann::json{{cost.first, double(cost.second) / 10000}}; // scale out from 0.1w to 1kw for presentation
     });
     nlohmann::json j;
     j["recommend"] = results;
