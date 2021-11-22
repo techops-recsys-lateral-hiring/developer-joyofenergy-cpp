@@ -128,18 +128,15 @@ Parameters
 | Parameter      | Description                                           |
 | -------------- | ----------------------------------------------------- |
 | `smartMeterId` | One of the smart meters' id listed above              |
-| `time`         | The date/time (as epoch) when the _reading_ was taken |
+| `time`         | The date/time (as RFC3399) when the _reading_ was taken |
 | `reading`      | The consumption in `kW` at the _time_ of the reading  |
 
 Example readings
 
-| Date (`GMT`)      | Epoch timestamp | Reading (`kW`) |
-| ----------------- | --------------: | -------------: |
-| `2020-11-29 8:00` |      1606636800 |         0.0503 |
-| `2020-11-29 8:01` |      1606636860 |         0.0621 |
-| `2020-11-29 8:02` |      1606636920 |         0.0222 |
-| `2020-11-29 8:03` |      1606636980 |         0.0423 |
-| `2020-11-29 8:04` |      1606637040 |         0.0191 |
+| Date (`GMT`)      | RFC3399                       | Reading (`kW`) |
+| ----------------- | ----------------------------- | -------------: |
+| `2020-11-11 8:00` | `2020-11-18T08:00:00.725202Z` |         0.0503 |
+| `2020-11-12 8:00` | `2020-11-18T08:00:00.725202Z` |         0.0213 |
 
 In the above example, the smart meter sampled readings, in `kW`, every minute. Note that the reading is in `kW` and
 not `kWH`, which means that each reading represents the consumption at the reading time. If no power is being consumed
@@ -155,7 +152,7 @@ $ curl \
   -X POST \
   -H "Content-Type: application/json" \
   "http://localhost:8080/readings/store" \
-  -d '{"smartMeterId":"smart-meter-0","electricityReadings":[{"time":1606636800,"reading":0.0503},{"time":1606636860,"reading":0.0621},{"time":1606636920,"reading":0.0222},{"time":1606636980,"reading":0.0423},{"time":1606637040,"reading":0.0191}]}'
+  -d '{"smartMeterId":"smart-meter-0","electricityReadings":[{"time":"2020-11-18T08:00:00.725202Z","reading":0.0503},{"time":"2020-11-18T08:00:00.725202Z","reading":0.0213}]}'
 ```
 
 The above command does not return anything.
@@ -187,23 +184,23 @@ Example output
     "readings": [
         {
             "reading": 0.4,
-            "time": "2021-08-20T07:04:49"
+            "time": "2021-08-20T07:04:49.000000Z"
         },
         {
             "reading": 0.123,
-            "time": "2021-08-20T07:07:49"
+            "time": "2021-08-20T07:07:49.000000Z"
         },
         {
             "reading": 0.23,
-            "time": "2021-08-20T07:10:49"
+            "time": "2021-08-20T07:10:49.000000Z"
         },
         {
             "reading": 0.432,
-            "time": "2021-08-20T07:13:49"
+            "time": "2021-08-20T07:13:49.000000Z"
         },
         {
             "reading": 0.44,
-            "time": "2021-08-20T07:16:49"
+            "time": "2021-08-20T07:16:49.000000Z"
         }
     ]
 }
