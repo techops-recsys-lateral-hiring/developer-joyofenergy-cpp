@@ -75,7 +75,7 @@ Compiles the project, runs the test and then creates an executable file.
 $ mkdir build && cd build
 $ conan install .. --build missing
 $ cmake ..
-$ cmake --build . -j
+$ cmake --build .
 ```
 
 
