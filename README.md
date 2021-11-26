@@ -64,7 +64,7 @@ The project makes use of Conan.
 
 ## Useful Conan commands
 
-The project makes use of Conan to help you out carrying some common tasks such as building
+The project makes use of [Conan](https://conan.io/) to help you out carrying some common tasks such as building
 the project or running it.
 
 ### Build the project
@@ -73,9 +73,8 @@ Compiles the project, runs the test and then creates an executable file.
 
 ```console
 $ mkdir build && cd build
-$ conan install .. --build missing
-$ cmake ..
-$ cmake --build .
+$ cmake .. -DCMAKE_BUILD_TYPE=Release
+$ cmake --build . --config Release
 ```
 
 
@@ -93,6 +92,10 @@ There are two types of tests, the unit tests and the functional tests. These can
 ### Run the application
   ```console
   $ ./app <address> <kPort> <concurrency>
+  ```
+or Windows
+  ```console
+  build> .\Release\app.exe <address> <kPort> <concurrency>
   ```
 
 ## API
