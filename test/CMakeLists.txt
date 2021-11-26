@@ -1,3 +1,9 @@
+add_definitions(-DBOOST_ALL_NO_LIB)
+
+if(WIN32)
+  add_definitions(-D_WIN32_WINNT=0x0601)
+endif()
+
 add_executable(endpoint_test)
 target_sources(endpoint_test PRIVATE ReadingTest.cpp)
 find_package(GTest REQUIRED)
