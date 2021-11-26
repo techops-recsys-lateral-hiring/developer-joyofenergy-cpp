@@ -16,12 +16,12 @@ namespace http = boost::beast::http;
 
 class PricePlanComparatorController {
  public:
-  PricePlanComparatorController(PricePlanService &pricePlanService) : pricePlanService(pricePlanService) {}
+  PricePlanComparatorController(PricePlanService &pricePlanService) : pricePlanService_(pricePlanService) {}
 
   http::response<http::string_body> Compare(const http::request<http::string_body> &req,
                                             const std::vector<std::string> &queries) {
     const auto &meterId = queries[0];
-    auto costs = pricePlanService.getConsumptionCostOfElectricityReadingsForEachPricePlan(meterId);
+    auto costs = pricePlanService_.getConsumptionCostOfElectricityReadingsForEachPricePlan(meterId);
 
     if (!costs) {
       return {http::status::not_found, req.version()};
@@ -48,7 +48,7 @@ class PricePlanComparatorController {
     if (queries.size() > 2){
       maybeLimit = std::stoi(queries[2]);
     }
-    auto costs = pricePlanService.getConsumptionCostOfElectricityReadingsForEachPricePlan(meterId);
+    auto costs = pricePlanService_.getConsumptionCostOfElectricityReadingsForEachPricePlan(meterId);
 
     if (!costs) {
       return {http::status::not_found, req.version()};
@@ -76,7 +76,7 @@ class PricePlanComparatorController {
   }
 
  private:
-  PricePlanService &pricePlanService;
+  PricePlanService &pricePlanService_;
 };
 
 #endif  // DEVELOPER_JOYOFENERGY_CPP_BEAST_PRICEPLANCOMPARATORCONTROLLER_H

@@ -12,22 +12,22 @@ using ::testing::Eq;
 
 class PricePlanComparatorControllerTest : public ::testing::Test {
  protected:
-  std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings;
-  MeterReadingService meterReadingService{meterAssociatedReadings};
-  std::vector<PricePlan> price_plans = pricePlans();
-  PricePlanService pricePlanService{price_plans, meterReadingService};
-  PricePlanComparatorController controller{pricePlanService};
+  std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings_;
+  MeterReadingService meterReadingService_{meterAssociatedReadings_};
+  std::vector<PricePlan> price_plans_ = pricePlans();
+  PricePlanService pricePlanService_{price_plans_, meterReadingService_};
+  PricePlanComparatorController controller_{pricePlanService_};
 };
 
 TEST_F(PricePlanComparatorControllerTest, CompareShouldCalculateCostForMeterReadingsForEveryPricePlan) {
   const std::string smart_meter_id = "smart-meter-0";
   std::vector<ElectricityReading> readings = {{std::chrono::system_clock::now() - std::chrono::hours{1}, 15 * 10000},
                                               {std::chrono::system_clock::now(), 5 * 10000}};
-  meterReadingService.storeReadings(smart_meter_id, readings);
+  meterReadingService_.storeReadings(smart_meter_id, readings);
   http::request<http::string_body> req;
   std::vector<std::string> queries = {smart_meter_id};
 
-  auto response = controller.Compare(req, queries);
+  auto response = controller_.Compare(req, queries);
 
   auto body = json::parse(response.body());
   EXPECT_THAT(body["pricePlanId"], Eq("price-plan-0"));
@@ -42,11 +42,11 @@ TEST_F(PricePlanComparatorControllerTest, RecommandShouldRecommandCheapestPriceP
       {std::chrono::system_clock::now() - std::chrono::seconds(1800), 35 * 10000},
       {std::chrono::system_clock::now(), 3 * 10000}
   };
-  meterReadingService.storeReadings(smart_meter_id, readings);
+  meterReadingService_.storeReadings(smart_meter_id, readings);
   http::request<http::string_body> req;
   std::vector<std::string> queries = {smart_meter_id};
 
-  auto response = controller.Recommend(req, queries);
+  auto response = controller_.Recommend(req, queries);
 
   auto body = json::parse(response.body());
   auto recommend = body["recommend"];
@@ -62,11 +62,11 @@ TEST_F(PricePlanComparatorControllerTest, RecommandShouldRecommendLimitedCheapes
       {std::chrono::system_clock::now() - std::chrono::seconds(2700), 5 * 10000},
       {std::chrono::system_clock::now(), 20 * 10000}
   };
-  meterReadingService.storeReadings(smart_meter_id, readings);
+  meterReadingService_.storeReadings(smart_meter_id, readings);
   http::request<http::string_body> req;
   std::vector<std::string> queries = {smart_meter_id, "limit", "2"};
 
-  auto response = controller.Recommend(req, queries);
+  auto response = controller_.Recommend(req, queries);
 
   auto body = json::parse(response.body());
   auto recommend = body["recommend"];
@@ -79,11 +79,11 @@ TEST_F(PricePlanComparatorControllerTest, RecommandShouldRecommendCheapestPriceP
   const std::string smart_meter_id = "smart-meter-0";
   std::vector<ElectricityReading> readings = {{std::chrono::system_clock::now() - std::chrono::hours(1), 25 * 10000},
                                               {std::chrono::system_clock::now(), 3 * 10000}};
-  meterReadingService.storeReadings(smart_meter_id, readings);
+  meterReadingService_.storeReadings(smart_meter_id, readings);
   http::request<http::string_body> req;
   std::vector<std::string> queries = {smart_meter_id, "limit", "5"};
 
-  auto response = controller.Recommend(req, queries);
+  auto response = controller_.Recommend(req, queries);
 
   auto body = json::parse(response.body());
   auto recommend = body["recommend"];
@@ -96,7 +96,7 @@ TEST_F(PricePlanComparatorControllerTest, CompareShouldReturnNotFoundGivenNoMatc
   http::request<http::string_body> req;
   std::vector<std::string> queries = {"meter-id-not-exist"};
 
-  auto response = controller.Compare(req, queries);
+  auto response = controller_.Compare(req, queries);
 
   EXPECT_THAT(response.result(), Eq(http::status::not_found));
 }

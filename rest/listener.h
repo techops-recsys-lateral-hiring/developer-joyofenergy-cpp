@@ -13,7 +13,7 @@ class listener : public std::enable_shared_from_this<listener> {
  public:
   listener(io_context &ioc, tcp::endpoint endpoint,
            std::function<http::response<http::string_body>(const http::request<http::string_body> &)> &handler)
-      : ioc_(ioc), acceptor_(boost::asio::make_strand(ioc)), handler(handler) {
+      : ioc_(ioc), acceptor_(boost::asio::make_strand(ioc)), handler_(handler) {
     error_code ec;
 
     acceptor_.open(endpoint.protocol(), ec);
@@ -53,14 +53,14 @@ class listener : public std::enable_shared_from_this<listener> {
     if (ec) {
       fail(ec, "accept");
     } else {
-      std::make_shared<session>(std::move(socket), handler)->run();
+      std::make_shared<session>(std::move(socket), handler_)->run();
     }
     do_accept();
   }
 
   io_context &ioc_;
   tcp::acceptor acceptor_;
-  std::function<http::response<http::string_body>(const http::request<http::string_body> &)> &handler;
+  std::function<http::response<http::string_body>(const http::request<http::string_body> &)> &handler_;
 };
 
 #endif  // DEVELOPER_JOYOFENERGY_CPP_BEAST_LISTENER_H

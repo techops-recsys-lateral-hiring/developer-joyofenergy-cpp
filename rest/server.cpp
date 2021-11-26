@@ -10,43 +10,43 @@
 namespace server_detail {
 class impl {
  public:
-  explicit impl(int concurrency) : ioc(concurrency) {
+  explicit impl(int concurrency) : ioc_(concurrency) {
     using reading = MeterReadingController;
     using price_plan = PricePlanComparatorController;
-    router.to<reading, &reading::Read>(R"(/readings/read/([a-zA-Z0-9_-]+))", electricityReadingService, meterReadingService);
-    router.to<reading, &reading::Store>(R"(/readings/store)", electricityReadingService, meterReadingService);
-    router.to<price_plan, &price_plan::Compare>(R"(/price-plans/compare-all/([a-zA-Z0-9_-]+))", pricePlanService);
-    router.to<price_plan, &price_plan::Recommend>(R"(/price-plans/recommend/([a-zA-Z0-9_-]+)\?(limit)=([0-9]+))",
-                                                  pricePlanService);
+    router_.to<reading, &reading::Read>(R"(/readings/read/([a-zA-Z0-9_-]+))", electricityReadingService_, meterReadingService);
+    router_.to<reading, &reading::Store>(R"(/readings/store)", electricityReadingService_, meterReadingService);
+    router_.to<price_plan, &price_plan::Compare>(R"(/price-plans/compare-all/([a-zA-Z0-9_-]+))", pricePlanService_);
+    router_.to<price_plan, &price_plan::Recommend>(R"(/price-plans/recommend/([a-zA-Z0-9_-]+)\?(limit)=([0-9]+))",
+                                                   pricePlanService_);
   }
 
   void launch(const char *address, unsigned short port) {
     using tcp = boost::asio::ip::tcp;
     auto endpoint = tcp::endpoint{boost::asio::ip::make_address(address), port};
-    std::make_shared<listener>(ioc, endpoint, handler)->run();
+    std::make_shared<listener>(ioc_, endpoint, handler)->run();
   }
 
-  void run() { ioc.run(); }
+  void run() { ioc_.run(); }
 
-  void stop() { ioc.stop(); }
+  void stop() { ioc_.stop(); }
 
  private:
-  boost::asio::io_context ioc;
-  std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings{readings()};
-  ElectricityReadingService electricityReadingService{meterAssociatedReadings};
-  MeterReadingService meterReadingService{meterAssociatedReadings};
-  std::vector<PricePlan> price_plans{pricePlans()};
-  PricePlanService pricePlanService{price_plans, meterReadingService};
-  router router;
-  std::function<http::response<http::string_body>(const http::request<http::string_body> &)> handler = router.handler();
+  boost::asio::io_context ioc_;
+  std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings_{readings()};
+  ElectricityReadingService electricityReadingService_{meterAssociatedReadings_};
+  MeterReadingService meterReadingService{meterAssociatedReadings_};
+  std::vector<PricePlan> price_plans_{pricePlans()};
+  PricePlanService pricePlanService_{price_plans_, meterReadingService};
+  router router_;
+  std::function<http::response<http::string_body>(const http::request<http::string_body> &)> handler = router_.handler();
 };
 }  // namespace server_detail
 
-server::server(int concurrency) : impl(std::make_unique<server_detail::impl>(concurrency)), concurrency(concurrency) {}
+server::server(int concurrency) : impl_(std::make_unique<server_detail::impl>(concurrency)), concurrency_(concurrency) {}
 
 server::~server() {
-  impl->stop();
-  for (auto &worker : threads) {
+  impl_->stop();
+  for (auto &worker : threads_) {
     if (worker.joinable()) {
       worker.join();
     }
@@ -54,9 +54,9 @@ server::~server() {
 }
 
 void server::run(const char *address, unsigned short port) {
-  impl->launch(address, port);
-  threads.reserve(concurrency);
-  for (auto i = concurrency; i > 0; --i) {
-    threads.emplace_back([this] { impl->run(); });
+  impl_->launch(address, port);
+  threads_.reserve(concurrency_);
+  for (auto i = concurrency_; i > 0; --i) {
+    threads_.emplace_back([this] { impl_->run(); });
   }
 }

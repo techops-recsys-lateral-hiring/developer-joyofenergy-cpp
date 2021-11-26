@@ -10,7 +10,7 @@ using ::testing::SizeIs;
 class ReadingsTest : public EndpointTest {};
 
 TEST_F(ReadingsTest, ReadReadingShouldRespondWithAllReadingsGivenValidMeter) {
-  auto res = client.Get("/readings/read/smart-meter-1");
+  auto res = client_.Get("/readings/read/smart-meter-1");
 
   ASSERT_THAT(res.result(), Eq(http::status::ok));
   auto body = json::parse(res.body());
@@ -19,7 +19,7 @@ TEST_F(ReadingsTest, ReadReadingShouldRespondWithAllReadingsGivenValidMeter) {
 }
 
 TEST_F(ReadingsTest, ReadReadingShouldRespondNotFoundGivenInvalidMeter) {
-  auto res = client.Get("/readings/read/smart-meter-not-existed");
+  auto res = client_.Get("/readings/read/smart-meter-not-existed");
 
   ASSERT_THAT(res.result(), Eq(http::status::not_found));
 }
@@ -38,13 +38,13 @@ TEST_F(ReadingsTest, StoreShouldRespondWithMultipelValidBatchesOfMeter) {
                     }
             ]
     })"_json;
-  auto res = client.Post("/readings/store", request_body);
+  auto res = client_.Post("/readings/store", request_body);
 
   ASSERT_THAT(res.result(), Eq(http::status::ok));
 }
 
 TEST_F(ReadingsTest, PricePlanShouldRespondWithValidMeter) {
-  auto res = client.Get("/price-plans/compare-all/smart-meter-0");
+  auto res = client_.Get("/price-plans/compare-all/smart-meter-0");
 
   ASSERT_THAT(res.result(), Eq(http::status::ok));
   auto body = json::parse(res.body());
@@ -53,7 +53,7 @@ TEST_F(ReadingsTest, PricePlanShouldRespondWithValidMeter) {
 }
 
 TEST_F(ReadingsTest, PricePlanRecommendShouldRespondWithValidMeterAndLimit) {
-  auto res = client.Get("/price-plans/recommend/smart-meter-0?limit=2");
+  auto res = client_.Get("/price-plans/recommend/smart-meter-0?limit=2");
 
   ASSERT_THAT(res.result(), Eq(http::status::ok));
   auto body = json::parse(res.body());

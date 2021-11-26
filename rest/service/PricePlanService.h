@@ -17,13 +17,13 @@ class PricePlanService {
   using time_point_type = std::chrono::time_point<std::chrono::system_clock>;
 
   std::optional<std::map<std::string, int>> getConsumptionCostOfElectricityReadingsForEachPricePlan(std::string smartMeterId) {
-    std::optional<std::vector<ElectricityReading>> electricityReadings = meterReadingService.getReadings(smartMeterId);
+    std::optional<std::vector<ElectricityReading>> electricityReadings = meterReadingService_.getReadings(smartMeterId);
     if (!electricityReadings.has_value()) {
       return {};
     }
 
     std::map<std::string, int> consumptionCostOfElectricityReadingsForEachPricePlan;
-    for (auto pricePlan : pricePlans) {
+    for (auto pricePlan : pricePlans_) {
       consumptionCostOfElectricityReadingsForEachPricePlan.insert(
           std::make_pair(pricePlan.getPlanName(), calculateCost(electricityReadings.value(), pricePlan)));
     }
@@ -31,11 +31,11 @@ class PricePlanService {
   }
 
   PricePlanService(std::vector<PricePlan> &pricePlans, MeterReadingService &meterReadingService)
-      : pricePlans(pricePlans), meterReadingService(meterReadingService) {}
+      : pricePlans_(pricePlans), meterReadingService_(meterReadingService) {}
 
  private:
-  const std::vector<PricePlan> &pricePlans;
-  MeterReadingService &meterReadingService;
+  const std::vector<PricePlan> &pricePlans_;
+  MeterReadingService &meterReadingService_;
 
   static auto calculateTimeElapsed(std::vector<ElectricityReading> electricityReadings) {
     ElectricityReading first = *electricityReadings.begin();

@@ -11,10 +11,10 @@ namespace http = boost::beast::http;
 
 class MeterReadingControllerTest : public ::testing::Test {
  protected:
-  std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings;
-  ElectricityReadingService electricityReadingService{meterAssociatedReadings};
-  MeterReadingService meterReadingService{meterAssociatedReadings};
-  MeterReadingController controller{electricityReadingService, meterReadingService};
+  std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings_;
+  ElectricityReadingService electricityReadingService_{meterAssociatedReadings_};
+  MeterReadingService meterReadingService_{meterAssociatedReadings_};
+  MeterReadingController controller_{electricityReadingService_, meterReadingService_};
 
   http::request<http::string_body> BuildRequest(http::verb verb, boost::string_view target, const json &request_body) {
     http::request<http::string_body> req{verb, target, 11};
@@ -29,7 +29,7 @@ TEST_F(MeterReadingControllerTest, StoreShouldResponseWithErrorGivenNoMeterIdIsS
   auto req = BuildRequest(http::verb::post, "/readings/store", R"({})"_json);
   std::vector<std::string> queries;
 
-  auto response = controller.Store(req, queries);
+  auto response = controller_.Store(req, queries);
 
   EXPECT_THAT(response.result(), Eq(http::status::internal_server_error));
 }
@@ -42,7 +42,7 @@ TEST_F(MeterReadingControllerTest, StoreShouldResponseWithErrorGivenEmptyMeterRe
   auto req = BuildRequest(http::verb::post, "/readings/store", body);
   std::vector<std::string> queries;
 
-  auto response = controller.Store(req, queries);
+  auto response = controller_.Store(req, queries);
 
   EXPECT_THAT(response.result(), Eq(http::status::internal_server_error));
 }
@@ -54,7 +54,7 @@ TEST_F(MeterReadingControllerTest, StoreShouldResponseWithErrorGivenNoMeterReadi
   auto req = BuildRequest(http::verb::post, "/readings/store", body);
   std::vector<std::string> queries;
 
-  auto response = controller.Store(req, queries);
+  auto response = controller_.Store(req, queries);
 
   EXPECT_THAT(response.result(), Eq(http::status::internal_server_error));
 }
@@ -82,15 +82,15 @@ TEST_F(MeterReadingControllerTest, StoreShouldStoreGivenMultipleBatchesOfMeterRe
   auto req2 = BuildRequest(http::verb::post, "/readings/store", body2);
   std::vector<std::string> queries;
 
-  controller.Store(req1, queries);
-  controller.Store(req2, queries);
+  controller_.Store(req1, queries);
+  controller_.Store(req2, queries);
 
   std::vector<ElectricityReading> expectedElectricityReadings = {
       {detail::fromRfc3339("2021-08-18T06:42:15.725202Z"), 1},
       {detail::fromRfc3339("2021-08-18T06:44:15.725202Z"), 2}
   };
 
-  EXPECT_THAT(meterReadingService.getReadings("smart-meter-0"), Eq(expectedElectricityReadings));
+  EXPECT_THAT(meterReadingService_.getReadings("smart-meter-0"), Eq(expectedElectricityReadings));
 }
 
 TEST_F(MeterReadingControllerTest, StoreShouldStoreAssociatedWithUserGivenMeterReadingsAssociatedWithTheUser) {
@@ -116,21 +116,21 @@ TEST_F(MeterReadingControllerTest, StoreShouldStoreAssociatedWithUserGivenMeterR
   auto req2 = BuildRequest(http::verb::post, "/readings/store", body2);
   std::vector<std::string> queries;
 
-  controller.Store(req1, queries);
-  controller.Store(req2, queries);
+  controller_.Store(req1, queries);
+  controller_.Store(req2, queries);
 
   std::vector<ElectricityReading> expectedElectricityReadings = {
       {detail::fromRfc3339("2021-08-18T06:42:15.725202Z"), 1},
   };
 
-  EXPECT_THAT(meterReadingService.getReadings("smart-meter-0"), Eq(expectedElectricityReadings));
+  EXPECT_THAT(meterReadingService_.getReadings("smart-meter-0"), Eq(expectedElectricityReadings));
 }
 
 TEST_F(MeterReadingControllerTest, ReadShouldReturnNotFoundGivenMeterIdThatIsNotRecognised) {
   http::request<http::string_body> req;
   std::vector<std::string> queries = {"smart-meter-0"};
 
-  auto response = controller.Read(req, queries);
+  auto response = controller_.Read(req, queries);
 
   EXPECT_THAT(response.result(), Eq(http::status::not_found));
 }

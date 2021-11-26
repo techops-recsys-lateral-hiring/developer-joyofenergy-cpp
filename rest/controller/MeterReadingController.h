@@ -38,11 +38,11 @@ auto renderReadingAsJson(const ElectricityReading &r) {
 class MeterReadingController {
  public:
   MeterReadingController(ElectricityReadingService &electricityReadingService, MeterReadingService &meterReadingService)
-      : electricityReadingService(electricityReadingService), meterReadingService(meterReadingService) {}
+      : electricityReadingService_(electricityReadingService), meterReadingService_(meterReadingService) {}
 
   http::response<http::string_body> Read(const http::request<http::string_body> &req, const std::vector<std::string> &queries) {
     const auto &meterId = queries[0];
-    auto readings = electricityReadingService.GetReading(meterId);
+    auto readings = electricityReadingService_.GetReading(meterId);
 
     if (!readings) {
       return {http::status::not_found, req.version()};
@@ -70,13 +70,13 @@ class MeterReadingController {
     for (auto &electricityReading : body["electricityReadings"]) {
       electricityReadings.emplace_back(detail::fromRfc3339(electricityReading["time"]), electricityReading["reading"]);
     }
-    meterReadingService.storeReadings(smartMeterId, electricityReadings);
+    meterReadingService_.storeReadings(smartMeterId, electricityReadings);
     return {};
   }
 
  private:
-  ElectricityReadingService &electricityReadingService;
-  MeterReadingService &meterReadingService;
+  ElectricityReadingService &electricityReadingService_;
+  MeterReadingService &meterReadingService_;
   bool IsMeterReadingsValid(const nlohmann::basic_json<> &smartMeterId,
                             const nlohmann::basic_json<> &electricityReadings) {
     if (smartMeterId.type() == nlohmann::json::value_t::null || electricityReadings.empty()) {

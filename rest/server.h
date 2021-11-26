@@ -18,9 +18,9 @@ class server {
   void run(const char *address, unsigned short port);
 
  private:
-  std::unique_ptr<server_detail::impl> impl;
-  int concurrency;
-  std::vector<std::thread> threads;
+  std::unique_ptr<server_detail::impl> impl_;
+  int concurrency_;
+  std::vector<std::thread> threads_;
 };
 
 #endif  // DEVELOPER_JOYOFENERGY_CPP_BEAST_SERVER_H

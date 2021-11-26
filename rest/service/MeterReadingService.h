@@ -19,28 +19,28 @@
 class MeterReadingService {
  public:
   std::optional<std::vector<ElectricityReading>> getReadings(const std::string &smartMeterId) {
-    std::shared_lock<std::shared_mutex> lock(mtx);
-    if (meterAssociatedReadings.find(smartMeterId) == meterAssociatedReadings.end()) {
+    std::shared_lock<std::shared_mutex> lock(mtx_);
+    if (meterAssociatedReadings_.find(smartMeterId) == meterAssociatedReadings_.end()) {
       return {};
     }
-    return meterAssociatedReadings[smartMeterId];
+    return meterAssociatedReadings_[smartMeterId];
   }
 
   void storeReadings(const std::string &smartMeterId, std::vector<ElectricityReading> &electricityReadings) {
-    std::unique_lock<std::shared_mutex> lock(mtx);
-    if (meterAssociatedReadings.find(smartMeterId) == meterAssociatedReadings.end()) {
-      meterAssociatedReadings[smartMeterId] = {};
+    std::unique_lock<std::shared_mutex> lock(mtx_);
+    if (meterAssociatedReadings_.find(smartMeterId) == meterAssociatedReadings_.end()) {
+      meterAssociatedReadings_[smartMeterId] = {};
     }
-    meterAssociatedReadings[smartMeterId].insert(meterAssociatedReadings[smartMeterId].end(), electricityReadings.begin(),
-                                                 electricityReadings.end());
+    meterAssociatedReadings_[smartMeterId].insert(meterAssociatedReadings_[smartMeterId].end(), electricityReadings.begin(),
+                                                  electricityReadings.end());
   }
 
   explicit MeterReadingService(std::unordered_map<std::string, std::vector<ElectricityReading>> &meterAssociatedReadings)
-      : meterAssociatedReadings(meterAssociatedReadings) {}
+      : meterAssociatedReadings_(meterAssociatedReadings) {}
 
  private:
-  std::unordered_map<std::string, std::vector<ElectricityReading>> &meterAssociatedReadings;
-  mutable std::shared_mutex mtx;
+  mutable std::shared_mutex mtx_;
+  std::unordered_map<std::string, std::vector<ElectricityReading>> &meterAssociatedReadings_;
 };
 
 #endif  // DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGSERVICE_H
