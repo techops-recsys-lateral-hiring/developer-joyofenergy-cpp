@@ -9,14 +9,17 @@
 
 #include <iostream>
 #include <map>
-#include <unordered_map>
+#include <mutex>
 #include <optional>
+#include <shared_mutex>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 class MeterReadingService {
  public:
   std::optional<std::vector<ElectricityReading>> getReadings(const std::string &smartMeterId) {
+    std::shared_lock<std::shared_mutex> lock(mtx);
     if (meterAssociatedReadings.find(smartMeterId) == meterAssociatedReadings.end()) {
       return {};
     }
@@ -24,6 +27,7 @@ class MeterReadingService {
   }
 
   void storeReadings(const std::string &smartMeterId, std::vector<ElectricityReading> &electricityReadings) {
+    std::unique_lock<std::shared_mutex> lock(mtx);
     if (meterAssociatedReadings.find(smartMeterId) == meterAssociatedReadings.end()) {
       meterAssociatedReadings[smartMeterId] = {};
     }
@@ -36,6 +40,7 @@ class MeterReadingService {
 
  private:
   std::unordered_map<std::string, std::vector<ElectricityReading>> &meterAssociatedReadings;
+  mutable std::shared_mutex mtx;
 };
 
 #endif  // DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGSERVICE_H
