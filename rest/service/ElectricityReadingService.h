@@ -13,7 +13,7 @@ class ElectricityReadingService {
   ElectricityReadingService(std::unordered_map<std::string, std::vector<ElectricityReading>> &meterAssociatedReadings)
       : meterAssociatedReadings_(meterAssociatedReadings) {}
 
-  std::optional<std::vector<ElectricityReading>> GetReading(const std::string &meterId) {
+  std::optional<std::vector<ElectricityReading>> GetReading(const std::string &meterId) const {
     auto found = meterAssociatedReadings_.find(meterId);
     if (found != meterAssociatedReadings_.end()) {
       return found->second;

@@ -13,7 +13,7 @@ namespace http = beast::http;
 class router {
  public:
   template <class Body = http::string_body>
-  auto handler() {
+  auto handler() const {
     return [&](const http::request<Body> &req) -> http::response<http::string_body> {
       const auto uri = req.target();
       for (auto &[path, handler] : handlers_) {
@@ -38,7 +38,7 @@ class router {
 
  private:
   template <class Body, class Allocator>
-  auto make_not_found(const http::request<Body, http::basic_fields<Allocator>> &req, beast::string_view target) {
+  static auto make_not_found(const http::request<Body, http::basic_fields<Allocator>> &req, beast::string_view target) {
     http::response<http::string_body> res{http::status::not_found, req.version()};
     res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
     res.set(http::field::content_type, "text/html");

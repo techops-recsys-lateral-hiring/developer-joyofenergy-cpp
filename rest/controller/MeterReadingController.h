@@ -40,7 +40,7 @@ class MeterReadingController {
   MeterReadingController(ElectricityReadingService &electricityReadingService, MeterReadingService &meterReadingService)
       : electricityReadingService_(electricityReadingService), meterReadingService_(meterReadingService) {}
 
-  http::response<http::string_body> Read(const http::request<http::string_body> &req, const std::vector<std::string> &queries) {
+  http::response<http::string_body> Read(const http::request<http::string_body> &req, const std::vector<std::string> &queries) const {
     const auto &meterId = queries[0];
     auto readings = electricityReadingService_.GetReading(meterId);
 
@@ -78,7 +78,7 @@ class MeterReadingController {
   ElectricityReadingService &electricityReadingService_;
   MeterReadingService &meterReadingService_;
   bool IsMeterReadingsValid(const nlohmann::basic_json<> &smartMeterId,
-                            const nlohmann::basic_json<> &electricityReadings) {
+                            const nlohmann::basic_json<> &electricityReadings) const {
     if (smartMeterId.type() == nlohmann::json::value_t::null || electricityReadings.empty()) {
       return false;
     }

@@ -19,7 +19,7 @@ class PricePlanComparatorController {
   PricePlanComparatorController(PricePlanService &pricePlanService) : pricePlanService_(pricePlanService) {}
 
   http::response<http::string_body> Compare(const http::request<http::string_body> &req,
-                                            const std::vector<std::string> &queries) {
+                                            const std::vector<std::string> &queries) const {
     const auto &meterId = queries[0];
     auto costs = pricePlanService_.getConsumptionCostOfElectricityReadingsForEachPricePlan(meterId);
 
@@ -42,7 +42,7 @@ class PricePlanComparatorController {
   }
 
   http::response<http::string_body> Recommend(const http::request<http::string_body> &req,
-                                              const std::vector<std::string> &queries) {
+                                              const std::vector<std::string> &queries) const {
     const auto &meterId = queries[0];
     std::optional<int> maybeLimit;
     if (queries.size() > 2){

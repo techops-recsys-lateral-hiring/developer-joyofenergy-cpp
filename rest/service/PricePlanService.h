@@ -16,7 +16,7 @@ class PricePlanService {
  public:
   using time_point_type = std::chrono::time_point<std::chrono::system_clock>;
 
-  std::optional<std::map<std::string, int>> getConsumptionCostOfElectricityReadingsForEachPricePlan(std::string smartMeterId) {
+  std::optional<std::map<std::string, int>> getConsumptionCostOfElectricityReadingsForEachPricePlan(const std::string &smartMeterId) const {
     std::optional<std::vector<ElectricityReading>> electricityReadings = meterReadingService_.getReadings(smartMeterId);
     if (!electricityReadings.has_value()) {
       return {};
@@ -37,11 +37,10 @@ class PricePlanService {
   const std::vector<PricePlan> &pricePlans_;
   MeterReadingService &meterReadingService_;
 
-  static auto calculateTimeElapsed(std::vector<ElectricityReading> electricityReadings) {
+  static auto calculateTimeElapsed(const std::vector<ElectricityReading> &electricityReadings) {
     ElectricityReading first = *electricityReadings.begin();
     ElectricityReading last = *electricityReadings.begin();
-    std::vector<ElectricityReading>::iterator it;
-    for (it = electricityReadings.begin(); it != electricityReadings.end(); it++) {
+    for (auto it = electricityReadings.begin(); it != electricityReadings.end(); it++) {
       if (it->getTime() < first.getTime()) {
         first = *it;
       }

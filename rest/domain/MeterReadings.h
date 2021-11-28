@@ -13,9 +13,9 @@ class MeterReadings {
   MeterReadings(std::string smartMeterId, std::list<ElectricityReading> electricityReadings)
       : smartMeterId_(smartMeterId), electricityReadings_(electricityReadings){};
 
-  std::list<ElectricityReading> getElectricityReadings() { return electricityReadings_; }
+  std::list<ElectricityReading> getElectricityReadings() const { return electricityReadings_; }
 
-  std::string getSmartMeterId() { return smartMeterId_; }
+  std::string getSmartMeterId() const { return smartMeterId_; }
 
  private:
   std::list<ElectricityReading> electricityReadings_;

@@ -18,7 +18,7 @@
 
 class MeterReadingService {
  public:
-  std::optional<std::vector<ElectricityReading>> getReadings(const std::string &smartMeterId) {
+  std::optional<std::vector<ElectricityReading>> getReadings(const std::string &smartMeterId) const {
     std::shared_lock<std::shared_mutex> lock(mtx_);
     if (meterAssociatedReadings_.find(smartMeterId) == meterAssociatedReadings_.end()) {
       return {};
