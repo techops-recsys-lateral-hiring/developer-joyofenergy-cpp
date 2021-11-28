@@ -6,6 +6,7 @@
 #include <domain/PricePlan.h>
 #include <service/MeterReadingService.h>
 
+#include <algorithm>
 #include <ctime>
 #include <map>
 #include <optional>
@@ -38,20 +39,10 @@ class PricePlanService {
   MeterReadingService &meterReadingService_;
 
   static auto calculateTimeElapsed(const std::vector<ElectricityReading> &electricityReadings) {
-    ElectricityReading first = *electricityReadings.begin();
-    ElectricityReading last = *electricityReadings.begin();
-    for (auto it = electricityReadings.begin(); it != electricityReadings.end(); it++) {
-      if (it->getTime() < first.getTime()) {
-        first = *it;
-      }
-      if (it->getTime() > first.getTime()) {
-        last = *it;
-      }
-    }
+    const auto [min, max] = std::minmax_element(std::begin(electricityReadings), std::end(electricityReadings),
+                                                [](auto const &l, auto const &r) { return l.getTime() < r.getTime(); });
 
-    std::chrono::duration duration = last.getTime() - first.getTime();
-
-    return duration;
+    return max->getTime() - min->getTime();
   }
 
   static int calculateCost(const std::vector<ElectricityReading> &electricityReadings, const PricePlan &pricePlan) {
