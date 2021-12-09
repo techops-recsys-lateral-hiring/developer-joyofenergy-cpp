@@ -13,8 +13,8 @@ class impl {
   explicit impl(int concurrency) : ioc_(concurrency) {
     using reading = MeterReadingController;
     using price_plan = PricePlanComparatorController;
-    router_.to<reading, &reading::Read>(R"(/readings/read/([a-zA-Z0-9_-]+))", electricityReadingService_, meterReadingService);
-    router_.to<reading, &reading::Store>(R"(/readings/store)", electricityReadingService_, meterReadingService);
+    router_.to<reading, &reading::Read>(R"(/readings/read/([a-zA-Z0-9_-]+))", electricityReadingService_, meterReadingService_);
+    router_.to<reading, &reading::Store>(R"(/readings/store)", electricityReadingService_, meterReadingService_);
     router_.to<price_plan, &price_plan::Compare>(R"(/price-plans/compare-all/([a-zA-Z0-9_-]+))", pricePlanService_);
     router_.to<price_plan, &price_plan::Recommend>(R"(/price-plans/recommend/([a-zA-Z0-9_-]+)\?(limit)=([0-9]+))",
                                                    pricePlanService_);
@@ -23,7 +23,7 @@ class impl {
   void launch(const char *address, unsigned short port) {
     using tcp = boost::asio::ip::tcp;
     auto endpoint = tcp::endpoint{boost::asio::ip::make_address(address), port};
-    std::make_shared<listener>(ioc_, endpoint, handler)->run();
+    std::make_shared<listener>(ioc_, endpoint, handler_)->run();
   }
 
   void run() { ioc_.run(); }
@@ -34,11 +34,11 @@ class impl {
   boost::asio::io_context ioc_;
   std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings_{readings()};
   ElectricityReadingService electricityReadingService_{meterAssociatedReadings_};
-  MeterReadingService meterReadingService{meterAssociatedReadings_};
+  MeterReadingService meterReadingService_{meterAssociatedReadings_};
   std::vector<PricePlan> price_plans_{pricePlans()};
-  PricePlanService pricePlanService_{price_plans_, meterReadingService};
+  PricePlanService pricePlanService_{price_plans_, meterReadingService_};
   router router_;
-  std::function<http::response<http::string_body>(const http::request<http::string_body> &)> handler = router_.handler();
+  std::function<http::response<http::string_body>(const http::request<http::string_body> &)> handler_ = router_.handler();
 };
 }  // namespace server_detail
 
