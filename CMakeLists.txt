@@ -17,7 +17,9 @@ include(${CMAKE_BINARY_DIR}/conan.cmake)
 conan_cmake_configure(REQUIRES boost/1.76.0
                       REQUIRES gtest/1.11.0
                       REQUIRES nlohmann_json/3.9.1
+                      REQUIRES date/3.0.1
                       OPTIONS boost:header_only=True
+                      OPTIONS date:header_only=True
                       GENERATORS cmake_find_package)
 
 conan_cmake_autodetect(settings)

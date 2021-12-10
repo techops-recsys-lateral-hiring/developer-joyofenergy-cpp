@@ -1,6 +1,7 @@
 #ifndef DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGCONTROLLER_H
 #define DEVELOPER_JOYOFENERGY_CPP_BEAST_METERREADINGCONTROLLER_H
 
+#include <date/date.h>
 #include <service/ElectricityReadingService.h>
 #include <service/MeterReadingService.h>
 
@@ -16,17 +17,13 @@ namespace http = boost::beast::http;
 
 namespace detail {
 auto toRfc3339(std::chrono::time_point<std::chrono::system_clock> time) {
-  std::stringstream ss;
-  const auto ctime = std::chrono::system_clock::to_time_t(time);
-  ss << std::put_time(std::gmtime(&ctime), "%FT%T");
-  return ss.str();
+  return date::format("%FT%TZ", time);
 }
 
 auto fromRfc3339(const std::string &time) {
-  std::tm tm = {};
-  std::stringstream ss(time);
-  ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
-  auto tp = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+  std::chrono::time_point<std::chrono::system_clock> tp;
+  std::istringstream ss(time);
+  ss >> date::parse("%FT%TZ", tp);
   return tp;
 }
 

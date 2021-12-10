@@ -15,3 +15,6 @@ find_package(Threads REQUIRED)
 target_link_libraries(rest PRIVATE Threads::Threads)
 
 target_link_libraries(rest PUBLIC controller)
+
+find_package(date REQUIRED)
+target_link_libraries(rest PUBLIC date::date)
