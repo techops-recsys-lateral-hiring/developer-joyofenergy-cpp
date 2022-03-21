@@ -1,3 +1,5 @@
+[![CI](https://github.com/techops-recsys-lateral-hiring/developer-joyofenergy-cpp/actions/workflows/ci.yml/badge.svg)](https://github.com/techops-recsys-lateral-hiring/developer-joyofenergy-cpp/actions/workflows/ci.yml)
+
 # Welcome to PowerDale
 
 PowerDale is a small town with around 100 residents. Most houses have a smart meter installed that can save and send
