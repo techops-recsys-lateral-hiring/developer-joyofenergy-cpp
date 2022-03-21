@@ -1,6 +1,7 @@
 #ifndef DEVELOPER_JOYOFENERGY_CPP_BEAST_PRICEPLAN_H
 #define DEVELOPER_JOYOFENERGY_CPP_BEAST_PRICEPLAN_H
 
+#include <chrono>
 #include <string>
 #include <utility>
 #include <vector>
