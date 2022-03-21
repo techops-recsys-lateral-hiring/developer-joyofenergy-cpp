@@ -35,7 +35,6 @@ jobs:
 
       - name: conan
         if: ${{ contains(matrix.os, 'windows') }}
-        working-directory: ${{github.workspace}}/build
         run: |
           mkdir ${{github.workspace}}/build -force
           cd ${{github.workspace}}/build
