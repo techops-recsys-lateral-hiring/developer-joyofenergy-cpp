@@ -1,6 +1,5 @@
 #include <nlohmann/json.hpp>
 
-#include "generator.h"
 #include "test/EndpointTest.h"
 
 using nlohmann::json;

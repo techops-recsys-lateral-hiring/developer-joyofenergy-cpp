@@ -1,5 +1,5 @@
 #include <gmock/gmock.h>
-#include <rest/service/MeterReadingService.h>
+#include <service/MeterReadingService.h>
 
 TEST(MeterReadingServiceTest, GetReadingsShouldReturnNullGivenMeterIdThatDoesNotExist) {
   std::unordered_map<std::string, std::vector<ElectricityReading>> meterAssociatedReadings;

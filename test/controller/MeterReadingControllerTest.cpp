@@ -1,5 +1,5 @@
+#include <controller/MeterReadingController.h>
 #include <gmock/gmock.h>
-#include <rest/controller/MeterReadingController.h>
 
 #include <boost/beast/http.hpp>
 #include <nlohmann/json.hpp>

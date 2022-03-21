@@ -1,6 +1,5 @@
+#include <controller/PricePlanComparatorController.h>
 #include <gmock/gmock.h>
-#include <rest/configuration.h>
-#include <rest/controller/PricePlanComparatorController.h>
 
 #include <string>
 
@@ -38,10 +37,8 @@ TEST_F(PricePlanComparatorControllerTest, CompareShouldCalculateCostForMeterRead
 
 TEST_F(PricePlanComparatorControllerTest, RecommandShouldRecommandCheapestPricePlansNoLimitForMeterUsage) {
   const std::string smart_meter_id = "smart-meter-0";
-  std::vector<ElectricityReading> readings = {
-      {std::chrono::system_clock::now() - std::chrono::seconds(1800), 35 * 10000},
-      {std::chrono::system_clock::now(), 3 * 10000}
-  };
+  std::vector<ElectricityReading> readings = {{std::chrono::system_clock::now() - std::chrono::seconds(1800), 35 * 10000},
+                                              {std::chrono::system_clock::now(), 3 * 10000}};
   meterReadingService.storeReadings(smart_meter_id, readings);
   http::request<http::string_body> req;
   std::vector<std::string> queries = {smart_meter_id};
@@ -58,10 +55,8 @@ TEST_F(PricePlanComparatorControllerTest, RecommandShouldRecommandCheapestPriceP
 
 TEST_F(PricePlanComparatorControllerTest, RecommandShouldRecommendLimitedCheapestPricePlansForMeterUsage) {
   const std::string smart_meter_id = "smart-meter-0";
-  std::vector<ElectricityReading> readings = {
-      {std::chrono::system_clock::now() - std::chrono::seconds(2700), 5 * 10000},
-      {std::chrono::system_clock::now(), 20 * 10000}
-  };
+  std::vector<ElectricityReading> readings = {{std::chrono::system_clock::now() - std::chrono::seconds(2700), 5 * 10000},
+                                              {std::chrono::system_clock::now(), 20 * 10000}};
   meterReadingService.storeReadings(smart_meter_id, readings);
   http::request<http::string_body> req;
   std::vector<std::string> queries = {smart_meter_id, "limit", "2"};

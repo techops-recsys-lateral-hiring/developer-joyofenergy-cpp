@@ -1,8 +1,17 @@
+#include <domain/PricePlan.h>
 #include <gmock/gmock.h>
-#include <rest/domain/PricePlan.h>
-#include <rest/controller/MeterReadingController.h>
 
 using ::testing::Eq;
+
+namespace {
+auto FromRfc3339(const std::string &time) {
+  std::tm tm = {};
+  std::stringstream ss(time);
+  ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
+  auto tp = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+  return tp;
+}
+}  // namespace
 
 TEST(PricePlanTest, GetEnergySupplierShouldReturnTheEnergySupplierGivenInTheConstructor) {
   const std::string energy_supplier = "Energy Supplier Name";
@@ -13,7 +22,7 @@ TEST(PricePlanTest, GetEnergySupplierShouldReturnTheEnergySupplierGivenInTheCons
 }
 
 TEST(PricePlanTest, GetPriceShouldReturnTheBasePriceGivenAnOrdinaryDateTime) {
-  auto time = detail::fromRfc3339("2021-09-30T06:42:15.725202Z");
+  auto time = FromRfc3339("2021-09-30T06:42:15.725202Z");
   PricePlan::PeakTimeMultiplier peak_time_multiplier(PricePlan::PeakTimeMultiplier::DayOfWeek::WEDNESDAY, 10);
   PricePlan price_plan("", "", 1, {peak_time_multiplier});
 
@@ -23,7 +32,7 @@ TEST(PricePlanTest, GetPriceShouldReturnTheBasePriceGivenAnOrdinaryDateTime) {
 }
 
 TEST(PricePlanTest, GetPriceShouldReturnAnExceptionPriceGivenExceptionalDateTime) {
-  auto time = detail::fromRfc3339("2021-09-29T06:42:15.725202Z");
+  auto time = FromRfc3339("2021-09-29T06:42:15.725202Z");
   PricePlan::PeakTimeMultiplier peak_time_multiplier(PricePlan::PeakTimeMultiplier::DayOfWeek::WEDNESDAY, 10);
   PricePlan price_plan("", "", 1, {peak_time_multiplier});
 
@@ -33,7 +42,7 @@ TEST(PricePlanTest, GetPriceShouldReturnAnExceptionPriceGivenExceptionalDateTime
 }
 
 TEST(PricePlanTest, GetPriceShouldReceiveMultipleExceptionalDateTimes) {
-  auto time = detail::fromRfc3339("2021-09-29T06:42:15.725202Z");
+  auto time = FromRfc3339("2021-09-29T06:42:15.725202Z");
   PricePlan::PeakTimeMultiplier peak_time_multiplier(PricePlan::PeakTimeMultiplier::DayOfWeek::WEDNESDAY, 10);
   PricePlan::PeakTimeMultiplier another_peak_time_multiplier(PricePlan::PeakTimeMultiplier::DayOfWeek::THURSDAY, 10);
   PricePlan price_plan("", "", 1, {peak_time_multiplier, another_peak_time_multiplier});
