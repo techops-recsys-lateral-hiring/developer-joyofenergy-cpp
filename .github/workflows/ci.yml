@@ -18,7 +18,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: macos-latest
-            libcxx: libstdc++
+            libcxx: libc++
           - os: ubuntu-latest
             libcxx: libstdc++11
     runs-on: ${{ matrix.os }}
@@ -32,20 +32,21 @@ jobs:
           pip install conan_package_tools
 
       - uses: actions/checkout@v2
-      
-      - name: prepare
+
+      - name: conan
         if: ${{ contains(matrix.os, 'windows') }}
-        run:
+        working-directory: ${{github.workspace}}/build
+        run: |
           mkdir ${{github.workspace}}/build -force
-          
-      - name: prepare
-        if: ${{ !contains(matrix.os, 'windows') }}
-        run:
-          mkdir -p ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
+          conan install ${{github.workspace}} -s build_type=${{ env.BUILD_TYPE }} --build missing
         
       - name: conan
+        if: ${{ !contains(matrix.os, 'windows') }}
         working-directory: ${{github.workspace}}/build
-        run:
+        run: |
+          mkdir -p ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
           conan install ${{github.workspace}} -s compiler.libcxx=${{ matrix.libcxx }} -s build_type=${{ env.BUILD_TYPE }} --build missing
 
       - name: cmake
