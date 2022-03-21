@@ -39,7 +39,7 @@ jobs:
           mkdir ${{github.workspace}}/build -force
           cd ${{github.workspace}}/build
           conan install ${{github.workspace}} -s build_type=${{ env.BUILD_TYPE }} --build missing
-        
+
       - name: conan
         if: ${{ !contains(matrix.os, 'windows') }}
         run: |
@@ -47,9 +47,18 @@ jobs:
           cd ${{github.workspace}}/build
           conan install ${{github.workspace}} -s compiler.libcxx=${{ matrix.libcxx }} -s build_type=${{ env.BUILD_TYPE }} --build missing
 
-      - name: cmake
-        run: |
+      - name: CMake configure
+        if: ${{ contains(matrix.os, 'windows') }}
+        run:
+          cmake -B ${{github.workspace}}/build
+
+      - name: CMake configure
+        if: ${{ !contains(matrix.os, 'windows') }}
+        run:
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: build
+        run:
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: test
