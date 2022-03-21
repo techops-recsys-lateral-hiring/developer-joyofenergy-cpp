@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/setup-python@v1
 
-      - name: Install conan && conan package tools
+      - name: Install conan and conan package tools
         run: |
           python -m pip install --upgrade pip
           pip install conan
@@ -36,8 +36,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: conan
-        working-directory: ${{github.workspace}}/build
-        run:
+        run: |
+          mkdir -p ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
           conan install ${{github.workspace}} -s compiler.libcxx=${{ matrix.libcxx }} --build missing
 
       - name: cmake
