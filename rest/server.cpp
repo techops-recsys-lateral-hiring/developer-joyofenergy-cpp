@@ -8,9 +8,9 @@
 #include "router.h"
 
 namespace server_detail {
-class impl {
+class Impl {
  public:
-  explicit impl(int concurrency) : ioc(concurrency) {
+  explicit Impl(int concurrency) : ioc(concurrency) {
     using reading = MeterReadingController;
     using price_plan = PricePlanComparatorController;
     router.to<reading, &reading::Read>(R"(/readings/read/([a-zA-Z0-9_-]+))", electricityReadingService, meterReadingService);
@@ -23,7 +23,7 @@ class impl {
   void launch(const char *address, unsigned short port) {
     using tcp = boost::asio::ip::tcp;
     auto endpoint = tcp::endpoint{boost::asio::ip::make_address(address), port};
-    std::make_shared<listener>(ioc, endpoint, handler)->run();
+    std::make_shared<Listener>(ioc, endpoint, handler)->run();
   }
 
   void run() { ioc.run(); }
@@ -37,14 +37,14 @@ class impl {
   MeterReadingService meterReadingService{meterAssociatedReadings};
   std::vector<PricePlan> price_plans{pricePlans()};
   PricePlanService pricePlanService{price_plans, meterReadingService};
-  router router;
+  Router router;
   std::function<http::response<http::string_body>(const http::request<http::string_body> &)> handler = router.handler();
 };
 }  // namespace server_detail
 
-server::server(int concurrency) : impl(std::make_unique<server_detail::impl>(concurrency)), concurrency(concurrency) {}
+Server::Server(int concurrency) : impl(std::make_unique<server_detail::Impl>(concurrency)), concurrency(concurrency) {}
 
-server::~server() {
+Server::~Server() {
   impl->stop();
   for (auto &worker : threads) {
     if (worker.joinable()) {
@@ -53,7 +53,7 @@ server::~server() {
   }
 }
 
-void server::run(const char *address, unsigned short port) {
+void Server::run(const char *address, unsigned short port) {
   impl->launch(address, port);
   threads.reserve(concurrency);
   for (auto i = concurrency; i > 0; --i) {

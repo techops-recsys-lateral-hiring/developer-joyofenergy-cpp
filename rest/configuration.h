@@ -41,7 +41,7 @@ std::unordered_map<std::string, std::string> smart_meter_to_price_plan_accounts(
 auto readings() {
   std::unordered_map<std::string, std::vector<ElectricityReading>> result;
   for (auto &[meter, plan] : smart_meter_to_price_plan_accounts()) {
-    result[meter] = generator{}.generate(21);
+    result[meter] = Generator{}.generate(21);
   }
   return result;
 }

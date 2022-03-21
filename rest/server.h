@@ -6,19 +6,19 @@
 #include <vector>
 
 namespace server_detail {
-class impl;
+class Impl;
 }
 
-class server {
+class Server {
  public:
-  explicit server(int concurrency);
+  explicit Server(int concurrency);
 
-  ~server();
+  ~Server();
 
   void run(const char *address, unsigned short port);
 
  private:
-  std::unique_ptr<server_detail::impl> impl;
+  std::unique_ptr<server_detail::Impl> impl;
   int concurrency;
   std::vector<std::thread> threads;
 };

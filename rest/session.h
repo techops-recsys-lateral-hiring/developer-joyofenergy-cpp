@@ -10,20 +10,20 @@
 
 #include "logger.h"
 
-class session : public std::enable_shared_from_this<session> {
+class Session : public std::enable_shared_from_this<Session> {
   using error_code = boost::beast::error_code;
   using tcp = boost::asio::ip::tcp;
   using RestHandler = std::function<http::response<http::string_body>(const http::request<http::string_body> &)>;
 
  public:
-  explicit session(tcp::socket &&socket, RestHandler &handler) : stream_(std::move(socket)), handler_(handler) {}
+  explicit Session(tcp::socket &&socket, RestHandler &handler) : stream_(std::move(socket)), handler_(handler) {}
 
   void run() {
     // We need to be executing within a strand to perform async operations
     // on the I/O objects in this session. Although not strictly necessary
     // for single-threaded contexts, this example code is written to be
     // thread-safe by default.
-    boost::asio::dispatch(stream_.get_executor(), boost::beast::bind_front_handler(&session::do_read, shared_from_this()));
+    boost::asio::dispatch(stream_.get_executor(), boost::beast::bind_front_handler(&Session::do_read, shared_from_this()));
   }
 
  private:
@@ -32,7 +32,7 @@ class session : public std::enable_shared_from_this<session> {
     // otherwise the operation behavior is undefined.
     req_ = {};
     stream_.expires_after(std::chrono::seconds(30));
-    http::async_read(stream_, buffer_, req_, boost::beast::bind_front_handler(&session::on_read, shared_from_this()));
+    http::async_read(stream_, buffer_, req_, boost::beast::bind_front_handler(&Session::on_read, shared_from_this()));
   }
 
   void on_read(error_code ec, std::size_t bytes_transferred) {
@@ -74,7 +74,7 @@ class session : public std::enable_shared_from_this<session> {
   void send(http::response<Body, Fields> &&msg) {
     auto sp = std::make_shared<typename std::remove_reference<decltype(msg)>::type>(std::move(msg));
     res_ = sp;
-    http::async_write(stream_, *sp, boost::beast::bind_front_handler(&session::on_write, shared_from_this(), sp->need_eof()));
+    http::async_write(stream_, *sp, boost::beast::bind_front_handler(&Session::on_write, shared_from_this(), sp->need_eof()));
   }
 
   boost::beast::tcp_stream stream_;

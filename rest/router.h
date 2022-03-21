@@ -10,7 +10,7 @@
 namespace beast = boost::beast;
 namespace http = beast::http;
 
-class router {
+class Router {
  public:
   template <class Body = http::string_body>
   auto handler() {

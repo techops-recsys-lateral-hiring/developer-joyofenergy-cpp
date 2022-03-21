@@ -11,7 +11,7 @@ class EndpointTest : public ::testing::Test {
   EndpointTest() { server.run(kHost, kPort); }
 
  private:
-  server server{1};
+  Server server{1};
   constexpr static const char *const kHost{"127.0.0.1"};
   constexpr static unsigned short kPort{8080};
 

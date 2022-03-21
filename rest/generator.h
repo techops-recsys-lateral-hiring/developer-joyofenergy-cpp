@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class generator {
+class Generator {
  public:
   std::vector<ElectricityReading> generate(int number) {
     std::vector<ElectricityReading> readings;
