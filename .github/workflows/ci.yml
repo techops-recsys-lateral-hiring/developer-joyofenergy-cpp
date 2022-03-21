@@ -40,7 +40,7 @@ jobs:
         run: |
           mkdir -p ${{github.workspace}}/build
           cd ${{github.workspace}}/build
-          conan install ${{github.workspace}} -s compiler.libcxx=${{ matrix.libcxx }} --build missing
+          conan install ${{github.workspace}} -s compiler.libcxx=${{ matrix.libcxx }} -s build_type=${{ env.BUILD_TYPE }} --build missing
 
       - name: cmake
         run: |
