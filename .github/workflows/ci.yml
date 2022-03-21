@@ -38,12 +38,12 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: prepare
-        if: ${{ contains(matrix.os, "windows") }}
+        if: ${{ contains(matrix.os, 'windows') }}
         run:
           mkdir ${{github.workspace}}/build -force
           
       - name: prepare
-        if: ${{ !contains(matrix.os, "windows") }}
+        if: ${{ !contains(matrix.os, 'windows') }}
         run:
           mkdir -p ${{github.workspace}}/build
         
