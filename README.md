@@ -1,3 +1,5 @@
+### The main branch now adopts Conan v2.x, which changed the building steps quite a lot, you could switch to `legacy` branch for Conan v1.x
+
 [![CI](https://github.com/techops-recsys-lateral-hiring/developer-joyofenergy-cpp/actions/workflows/ci.yml/badge.svg)](https://github.com/techops-recsys-lateral-hiring/developer-joyofenergy-cpp/actions/workflows/ci.yml)
 
 # Welcome to PowerDale
@@ -59,34 +61,65 @@ These values are used in the code and in the following examples too.
 
 ## Requirements
 
-The project requires Cmake 3.21 or
-higher.
+1. CMake 3.23 above is **required**.
 
-The project makes use of Conan.
+Check [here](https://cmake.org/download/) for installation if you get a older version.
 
-## Useful Conan commands
+2. Conan 2.0 above is **required**.
 
-The project makes use of Conan to help you out carrying some common tasks such as building
-the project or running it.
+Check [here](https://docs.conan.io/2/installation.html) for installation if you get a older version.
+
+The project makes use of Conan to help you out carrying some common tasks such as building the project or running it.
+
+Technecally, Conan is not must have, but in order to simplify environment setup, following guide line is base on Conan.
 
 ### Build the project
 
-Compiles the project, runs the test and then creates an executable file.
+0. Setup a profile for Conan, if this is the first time you get Conan 2.x run on your machine.
 
-```console
-$ mkdir build && cd build
-$ conan install .. -s --build missing
-$ cmake ..
+```shell
+$ conan profile detect
+```
+
+Now, assuming you are already at the root of this repository, follow:
+
+1. Install or build the dependencies
+
+
+```shell
+$ conan install . --output-folder=build -s build_type=Debug --build=missing
+```
+
+2. Generate build system for this repository
+
+```shell
+$ cmake --preset conan-debug
+```
+
+> ☀️ If you are building on **Windows with Visual Studio** (Generator), please use `conan-default` instead of, like:
+>
+> ```shell
+> $ cmake --preset conan-default
+> ```
+
+3. Build this repository
+
+```shell
 $ cmake --build .
 ```
 
-#### ‼️ Build Troubleshooting
+> ☀️ If you are building on **Windows with Visual Studio** (Generator), and prefer IDE, you could find a generate project file in `build` directory and open it with Visual Studio for building and test running.
+
+> ⚡️With option `-j<number>` (e.g. -j4 ) could enable parallel build job, which could usually accelerate your build.
+
+### ‼️ Build Troubleshooting
 
 If you suffer compile error like this during build step (especial on Linux with GCC):
 
 > undefined reference to `testing::Message::GetString\[abi:cxx11]() const'
 
-It's a well-known issue of GCC switching C++ runtime library from `libstdc++` to `libstdc++11` which are ABI incompatible. The most of earier versions of conan might design to remain using `libstdc++` for backward compatibility, to tweak conan to adopt `libstdc++11` explictly, you can change the second command above to:
+It's a well-known issue of GCC switching C++ runtime library from `libstdc++` to `libstdc++11` which are ABI incompatible. The most of earier versions of conan might design to remain using `libstdc++` for back
+ard compatibility, to tweak conan to adopt `libstdc++11` explictly by using option `-s compiler.libcxx=libstdc++11`, you can change the second command above to:
 
 ```console
 $ conan install .. -s compiler.libcxx=libstdc++11 --build missing
@@ -100,13 +133,13 @@ There are two types of tests, the unit tests and the functional tests. These can
 
 - Run functional tests only
 
-  ```console
+  ```shell
   $ ctest .
   ```
 
 
 ### Run the application
-  ```console
+  ```shell
   $ ./app <address> <kPort> <concurrency>
   ```
 
@@ -162,7 +195,7 @@ readings.
 
 The following POST request, is an example request using CURL, sends the readings shown in the table above.
 
-```console
+```shell
 $ curl \
   -X POST \
   -H "Content-Type: application/json" \
@@ -188,7 +221,7 @@ Parameters
 
 Retrieving readings using CURL
 
-```console
+```shell
 $ curl "http://localhost:8080/readings/read/smart-meter-0"
 ```
 
@@ -237,7 +270,7 @@ Parameters
 
 Retrieving readings using CURL
 
-```console
+```shell
 $ curl "http://localhost:8080/price-plans/compare-all/smart-meter-0"
 ```
 
@@ -271,7 +304,7 @@ Parameters
 
 Retrieving readings using CURL
 
-```console
+```shell
 $ curl "http://localhost:8080/price-plans/recommend/smart-meter-0?limit=2"
 ```
 
@@ -289,4 +322,3 @@ Example output
     ]
 }
 ```
-
