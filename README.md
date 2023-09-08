@@ -75,11 +75,24 @@ Compiles the project, runs the test and then creates an executable file.
 
 ```console
 $ mkdir build && cd build
-$ conan install .. --build missing
+$ conan install .. -s --build missing
 $ cmake ..
 $ cmake --build .
 ```
 
+#### ‼️ Build Troubleshooting
+
+If you suffer compile error like this during build step (especial on Linux with GCC):
+
+> undefined reference to `testing::Message::GetString\[abi:cxx11]() const'
+
+It's a well-known issue of GCC switching C++ runtime library from `libstdc++` to `libstdc++11` which are ABI incompatible. The most of earier versions of conan might design to remain using `libstdc++` for backward compatibility, you can tweak conan to adopt `libstdc++11` explictly by change then second command above to:
+
+```console
+$ conan install . -s compiler.libcxx=libstdc++11 --build missing
+```
+
+Then proceed with subsequent commands and it should build fine.
 
 ### Run the tests
 
