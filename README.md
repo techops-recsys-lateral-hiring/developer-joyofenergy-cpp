@@ -86,10 +86,10 @@ If you suffer compile error like this during build step (especial on Linux with 
 
 > undefined reference to `testing::Message::GetString\[abi:cxx11]() const'
 
-It's a well-known issue of GCC switching C++ runtime library from `libstdc++` to `libstdc++11` which are ABI incompatible. The most of earier versions of conan might design to remain using `libstdc++` for backward compatibility, you can tweak conan to adopt `libstdc++11` explictly by change then second command above to:
+It's a well-known issue of GCC switching C++ runtime library from `libstdc++` to `libstdc++11` which are ABI incompatible. The most of earier versions of conan might design to remain using `libstdc++` for backward compatibility, to tweak conan to adopt `libstdc++11` explictly, you can change the second command above to:
 
 ```console
-$ conan install . -s compiler.libcxx=libstdc++11 --build missing
+$ conan install .. -s compiler.libcxx=libstdc++11 --build missing
 ```
 
 Then proceed with subsequent commands and it should build fine.
