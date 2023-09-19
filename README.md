@@ -112,21 +112,6 @@ $ cmake --build .
 
 > ⚡️With option `-j<number>` (e.g. -j4 ) could enable parallel build job, which could usually accelerate your build.
 
-### ‼️ Build Troubleshooting
-
-If you suffer compile error like this during build step (especial on Linux with GCC):
-
-> undefined reference to `testing::Message::GetString\[abi:cxx11]() const'
-
-It's a well-known issue of GCC switching C++ runtime library from `libstdc++` to `libstdc++11` which are ABI incompatible. The most of earier versions of conan might design to remain using `libstdc++` for back
-ard compatibility, to tweak conan to adopt `libstdc++11` explictly by using option `-s compiler.libcxx=libstdc++11`, you can change the second command above to:
-
-```console
-$ conan install .. -s compiler.libcxx=libstdc++11 --build missing
-```
-
-Then proceed with subsequent commands and it should build fine.
-
 ### Run the tests
 
 There are two types of tests, the unit tests and the functional tests. These can be executed as follows.
